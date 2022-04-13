@@ -26,3 +26,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Build docs with Maven
       run: mvn javadoc:javadoc
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4.3.0
+      with:
+        branch: gh-pages
+        folder: ./docs
+
