@@ -31,3 +31,7 @@ jobs:
       with:
         branch: gh-pages
         folder: ./docs/apidocs
+    - name: Generate JaCoCo coverage badge
+      uses: cicirello/jacoco-badge-generator@v2
+      with:
+        generate-branches-badge: true
