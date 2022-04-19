@@ -2,6 +2,8 @@ package pandaJava;
 
 import org.junit.jupiter.api.Test;
 
+import javax.xml.crypto.Data;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,12 +68,6 @@ class DataframeTest {
             }
         }
         assertTrue(ret);
-    }
-
-    @Test
-    public void testIncorrectArray () {
-        Dataframe d2 = new Dataframe(incorrectArray);
-        assertThrows(NullPointerException.class, () -> d2.getLine(0));
     }
 
     private Object[][] generateCorrectArray () {
