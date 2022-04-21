@@ -102,76 +102,77 @@ public class Dataframe {
         return this.rowType;
     }
 
-    public void showAllDataFrame(){
+
+    public String toString(){
         int i = 0;
-        int j = 0;
-        System.out.printf("%1s"," ");//For the first empty case
-        while(getLine(0).size() > j){
-            System.out.printf("%8s","col"+(j+1));//Print column label (not in the dataframe)
-            j++;
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%1s"," "));//For the first empty case
+        for (String key : this.frameRows.keySet() ) {
+            sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
         }
-        System.out.println();
+        sb.append('\n');
         //Parcours des lignes du dataframe
         while(this.frameLines.size() > i) {
             List<Object> line = getLine(i);
-            System.out.printf("%1s",i);//Print column indices (not in the dataframe)
+            sb.append(String.format("%1s",i));//Print column indices (not in the dataframe)
             for (Object elem : line) {
-                System.out.printf("%8s",elem);//Print dataframe elements
+                sb.append(String.format("%8s",elem));//Print dataframe elements
             }
-            System.out.println();
+            sb.append('\n');
             i++;
         }
+        return sb.toString();
     }
 
-    public void showFirstLines(int nbLines) throws Exception {
+    public String toStringFirstLines(int nbLines) throws Exception {
         if(nbLines > this.frameLines.size()){
-            throw new Exception("Erreur : Il y a seulement : " + this.frameLines.size() + "lignes dans ce dataframe");
+            throw new IllegalArgumentException("Erreur : Il y a seulement : " + this.frameLines.size() + "lignes dans ce dataframe");
         }else if(nbLines<=0){
-            throw new Exception("Veuillez choisir un nombre de lignes supérieur à 0");
+            throw new IllegalArgumentException("Veuillez choisir un nombre de lignes supérieur à 0");
         }
         int i = 0;
-        int j = 0;
-        System.out.printf("%1s"," ");//For the first empty case
-        while(getLine(0).size() > j){
-            System.out.printf("%8s","col"+(j+1));//Print column label (not in the dataframe)
-            j++;
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%1s"," "));//For the first empty case
+        for (String key : this.frameRows.keySet() ) {
+            sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
         }
-        System.out.println();
+        sb.append('\n');
         //Parcours des lignes du dataframe
         while(nbLines > i) {
             List<Object> line = getLine(i);
-            System.out.printf("%1s",i);//Print column indices (not in the dataframe)
+            sb.append(String.format("%1s",i));//Print column indices (not in the dataframe)
             for (Object elem : line) {
-                System.out.printf("%8s",elem);//Print dataframe elements
+                sb.append(String.format("%8s",elem));//Print dataframe elements
             }
-            System.out.println();
+            sb.append('\n');
             i++;
         }
+        return sb.toString();
     }
 
-    public void showLastLines(int nbLines) throws Exception {
+    public String toStringLastLines(int nbLines) throws Exception {
         if(nbLines > this.frameLines.size()){
-            throw new Exception("Erreur : Il y a seulement : " + this.frameLines.size() + " lignes dans ce dataframe");
+            throw new IllegalArgumentException("Erreur : Il y a seulement : " + this.frameLines.size() + " lignes dans ce dataframe");
         }else if(nbLines<=0){
-            throw new Exception("Veuillez choisir un nombre de lignes supérieur à 0");
+            throw new IllegalArgumentException("Veuillez choisir un nombre de lignes supérieur à 0");
         }
         int i = this.frameLines.size()-nbLines;
-        int j = 0;
-        System.out.printf("%1s"," ");//For the first empty case
-        while(getLine(0).size() > j){
-            System.out.printf("%8s","col"+(j+1));//Print column label (not in the dataframe)
-            j++;
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%1s"," "));//For the first empty case
+        for (String key : this.frameRows.keySet() ) {
+            sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
         }
-        System.out.println();
+        sb.append('\n');
         //Parcours des lignes du dataframe
         while(this.frameLines.size() > i) {
             List<Object> line = getLine(i);
-            System.out.printf("%1s",i);//Print column indices (not in the dataframe)
+            sb.append(String.format("%1s",i));//Print column indices (not in the dataframe)
             for (Object elem : line) {
-                System.out.printf("%8s",elem);//Print dataframe elements
+                sb.append(String.format("%8s",elem));//Print dataframe elements
             }
-            System.out.println();
+            sb.append('\n');
             i++;
         }
+        return sb.toString();
     }
 }

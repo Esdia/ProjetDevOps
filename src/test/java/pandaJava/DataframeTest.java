@@ -1,9 +1,6 @@
 package pandaJava;
 
 import org.junit.jupiter.api.Test;
-
-import javax.xml.crypto.Data;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +65,62 @@ class DataframeTest {
             }
         }
         assertTrue(ret);
+    }
+
+
+    @Test
+    public void testToString(){
+        String expected = "        A       B       C       D       E\n" +
+                "0       0       1       2       3       4\n" +
+                "1       5       6       7       8       9\n" +
+                "2      10      11      12      13      14\n" +
+                "3      15      16      17      18      19\n" +
+                "4      20      21      22      23      24\n";
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.toString(), expected);
+    }
+
+    @Test
+    public void testToStringFirstLines() throws Exception {
+        String expected = "        A       B       C       D       E\n" +
+                "0       0       1       2       3       4\n" +
+                "1       5       6       7       8       9\n";
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.toStringFirstLines(2), expected);
+    }
+
+    @Test
+    public void testToStringFirstLinesErrorArgumentTooBig() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertThrows(IllegalArgumentException.class, () -> myDataFrame.toStringFirstLines(6));
+    }
+
+    @Test
+    public void testToStringFirstLinesErrorArgumentBelowOne() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertThrows(IllegalArgumentException.class, () -> myDataFrame.toStringFirstLines(-1));
+    }
+
+    @Test
+    public void testToStringLastLines() throws Exception {
+        String expected = "        A       B       C       D       E\n" +
+                "2      10      11      12      13      14\n" +
+                "3      15      16      17      18      19\n" +
+                "4      20      21      22      23      24\n";
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.toStringLastLines(3), expected);
+    }
+
+    @Test
+    public void testToStringLastLinesErrorArgumentTooBig() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertThrows(IllegalArgumentException.class, () -> myDataFrame.toStringLastLines(45));
+    }
+
+    @Test
+    public void testToStringLastLinesErrorArgumentBelowOne() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertThrows(IllegalArgumentException.class, () -> myDataFrame.toStringLastLines(0));
     }
 
     private Object[][] generateCorrectArray () {
