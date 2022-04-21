@@ -24,7 +24,7 @@ class DataframeTest {
 
     @BeforeAll
     public static void createCSVTestFile () {
-        path = "./src/test/testFiles/CSVTest.txt";
+        path = "./src/test/resources/CSVTest.txt";
         try {
             File myObj = new File(path);
 
@@ -128,19 +128,18 @@ class DataframeTest {
 
     @Test
     public void testValuesLineC2 () {
-        Dataframe dd = new Dataframe("C://Users/lenovo/Desktop/CSV.txt");
         int age = 18;
         String nom = "Fourier";
         boolean adulte = true;
-        for(int i = 0; i < dd.getLine(0).size(); i++) {
+        for(int i = 0; i < d2.getLine(0).size(); i++) {
             if(i == 1)
-                assertTrue(dd.getLine(0).get(0).equals(age));
+                assertTrue(d2.getLine(0).get(0).equals(age));
             if(i == 2)
-                assertTrue(dd.getLine(0).get(1).equals(nom));
+                assertTrue(d2.getLine(0).get(1).equals(nom));
             else
-                assertTrue(dd.getLine(0).get(2).equals(adulte));
+                assertTrue(d2.getLine(0).get(2).equals(adulte));
         }
-        assertTrue(dd.getLine(0).size() == 3);
+        assertTrue(d2.getLine(0).size() == 3);
     }
 
     private Object[][] generateCorrectArray () {
