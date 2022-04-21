@@ -9,7 +9,7 @@ public class Dataframe {
     private Map<String, List<Object>> frameRows;
     private Map<String, Class> rowType;
 
-    public Dataframe (Object[][] array) {
+    public Dataframe (Object[][] array) throws MistypedRowException {
         try {
             String label = "";
             this.frameRows = new HashMap<>();
@@ -32,19 +32,26 @@ public class Dataframe {
                         this.frameLines.put(i, new ArrayList<>());
                     Object e = array[i][j];
                     if(!(e.getClass().getName().equals(this.rowType.get(label).getName())))
-                        throw new IllegalArgumentException();
+                        throw new MistypedRowException();
                     else {
                         this.frameLines.get(i).add(array[i][j]);
                         this.frameRows.get(label).add(array[i][j]);
                     }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MistypedRowException | ClassNotFoundException e) {
+            System.out.println(e.getClass().getName());
+            if(e.getClass().getName().equals("pandaJava.MistypedRowException"))
+                throw new MistypedRowException("Mistyped array argument. A row has a unique type.", e);
+            else
+                e.printStackTrace();
         }
     }
 
-    //TODO verifier que le fichier est correct ? : au moins 3 lignes
+    /**
+     * Create a DataFrame from a CSV file. We consider the CSV file to have only 3 types : boolean, String and Integer.
+     * @param path
+     */
     public Dataframe (String path) {
         try {
             this.frameRows = new HashMap<>();
@@ -55,14 +62,15 @@ public class Dataframe {
             String st = "";
             String[] types = new String[0];
             String[] labels = new String[0];
-            int i = 0;
+            int i = 0; //Sert à différencier les 2 premières lignes des suivantes.
             int lineIndex = 0;
             while ((st = br.readLine()) != null) {
+                //Première ligne (types)
                 if (i == 0) {
                     types = st.split(";");
                     i++;
                 }
-
+                //Deuxième ligne (labels)
                 else if (i == 1) {
                     labels = st.split(";");
                     for(int j = 0; j < labels.length; j++) {
@@ -72,13 +80,21 @@ public class Dataframe {
                     i++;
                 }
 
+                //Lignes après la deuxième (valeurs)
                 else {
                     this.frameLines.put(lineIndex, new ArrayList<>());
                     String[] line = st.split(";");
                     for(int j = 0; j < line.length; j++) {
                         Class c = this.rowType.get(labels[j]); //On récupère la classe de la colonne
-                        String toBeCasted = line[j]; //Le string à caster vers la classe de la colonne
-                        Object elem = c.cast(toBeCasted); //Cast de String vers classe de la colonne
+                        Object elem;
+                        //On cast l'élément en String, en Int ou en booléen en fonction du type de la colonne.
+                        if(c.getName().equals("java.lang.Integer"))
+                            elem = Integer.valueOf(line[j]);
+                        else
+                            if (c.getName().equals("java.lang.Boolean"))
+                                elem = Boolean.valueOf(line[j]);
+                        else
+                            elem = line[j];
                         this.frameLines.get(lineIndex).add(elem);
                         this.frameRows.get(labels[j]).add(elem);
                     }
@@ -98,8 +114,8 @@ public class Dataframe {
         return this.frameLines.get(index);
     }
 
-    public Map<String, Class> getRowType () {
-        return this.rowType;
+    public Class getRowType (String label) {
+        return this.rowType.get(label);
     }
 
 
