@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"pandaJava","l":"Main"}]
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"pandaJava","l":"Dataframe"},{"p":"pandaJava","l":"MistypedRowException"}]
