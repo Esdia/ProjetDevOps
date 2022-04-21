@@ -1,4 +1,0 @@
-Integer;String;Boolean
-age;nom;adulte
-18;Fourier;true
-13;Lasalle;false

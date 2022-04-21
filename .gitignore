@@ -1,8 +1,0 @@
-# IntelliJ project files
-.idea/
-
-# Maven build directory
-target/
-
-# JavaDoc
-docs
