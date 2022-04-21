@@ -117,4 +117,78 @@ public class Dataframe {
     public Class getRowType (String label) {
         return this.rowType.get(label);
     }
+
+
+    public String toString(){
+        int i = 0;
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%1s"," "));//For the first empty case
+        for (String key : this.frameRows.keySet() ) {
+            sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
+        }
+        sb.append('\n');
+        //Parcours des lignes du dataframe
+        while(this.frameLines.size() > i) {
+            List<Object> line = getLine(i);
+            sb.append(String.format("%1s",i));//Print column indices (not in the dataframe)
+            for (Object elem : line) {
+                sb.append(String.format("%8s",elem));//Print dataframe elements
+            }
+            sb.append('\n');
+            i++;
+        }
+        return sb.toString();
+    }
+
+    public String toStringFirstLines(int nbLines) throws Exception {
+        if(nbLines > this.frameLines.size()){
+            throw new IllegalArgumentException("Erreur : Il y a seulement : " + this.frameLines.size() + "lignes dans ce dataframe");
+        }else if(nbLines<=0){
+            throw new IllegalArgumentException("Veuillez choisir un nombre de lignes supérieur à 0");
+        }
+        int i = 0;
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%1s"," "));//For the first empty case
+        for (String key : this.frameRows.keySet() ) {
+            sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
+        }
+        sb.append('\n');
+        //Parcours des lignes du dataframe
+        while(nbLines > i) {
+            List<Object> line = getLine(i);
+            sb.append(String.format("%1s",i));//Print column indices (not in the dataframe)
+            for (Object elem : line) {
+                sb.append(String.format("%8s",elem));//Print dataframe elements
+            }
+            sb.append('\n');
+            i++;
+        }
+        return sb.toString();
+    }
+
+    public String toStringLastLines(int nbLines) throws Exception {
+        if(nbLines > this.frameLines.size()){
+            throw new IllegalArgumentException("Erreur : Il y a seulement : " + this.frameLines.size() + " lignes dans ce dataframe");
+        }else if(nbLines<=0){
+            throw new IllegalArgumentException("Veuillez choisir un nombre de lignes supérieur à 0");
+        }
+        int i = this.frameLines.size()-nbLines;
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%1s"," "));//For the first empty case
+        for (String key : this.frameRows.keySet() ) {
+            sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
+        }
+        sb.append('\n');
+        //Parcours des lignes du dataframe
+        while(this.frameLines.size() > i) {
+            List<Object> line = getLine(i);
+            sb.append(String.format("%1s",i));//Print column indices (not in the dataframe)
+            for (Object elem : line) {
+                sb.append(String.format("%8s",elem));//Print dataframe elements
+            }
+            sb.append('\n');
+            i++;
+        }
+        return sb.toString();
+    }
 }
