@@ -198,6 +198,24 @@ class DataframeTest {
         assertThrows(IllegalArgumentException.class, () -> myDataFrame.toStringLastLines(0));
     }
 
+    @Test
+    public void testdataFrameSumBasicsInteger() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.dataframeSum("A"),50.0f);
+    }
+
+    @Test
+    public void testdataFrameSumBasicsIntegerLabelError() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertThrows(IllegalArgumentException.class, () -> myDataFrame.dataframeSum("1"));
+    }
+
+    @Test
+    public void testdataFrameMeanBasicsInteger() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.dataframeMean("A"),10.0f);
+    }
+
     private Object[][] generateCorrectArray () {
         int nb = 0;
         Object[][] test = new Object[5][5];
