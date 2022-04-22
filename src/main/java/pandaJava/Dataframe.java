@@ -191,4 +191,23 @@ public class Dataframe {
         }
         return sb.toString();
     }
+
+    //Statistics Parts
+
+    /**
+     * Calcul la moyenne sur une colonne donnée
+     * @return
+     */
+    public Object mean(){
+        return 0;
+    }
+
+    public Object min(){
+        return 0;
+    }
+
+    public Object max(){
+        return 0;
+    }
+
 }
