@@ -239,7 +239,7 @@ class DataframeTest {
     @Test
     public void testIncorrectGetSubLinesLambda () {
         assertThrows(IllegalArgumentException.class, () -> d2.getSubLines("nom", (x) -> x < 18));
-
+    }
 
     @Test
     public void testToString() throws MistypedRowException {
