@@ -215,7 +215,7 @@ public class Dataframe {
 
     /**
      * Renvoie un sous ensemble de lignes en fonction d'un label et d'une expression lambda. Filte les lignes en fonction des valeurs d'une colonne.
-     * Par exemple pour les paramètres : (age,(x) -> x > 5); on va récupérer toutes les lignes où l'âge est supérieur à 5.
+     * Par exemple pour les paramètres : (age,(x) -&gt; x &gt; 5); on va récupérer toutes les lignes où l'âge est supérieur à 5.
      * @param label
      * @param evaluation
      * @return sous ensemble de lignes

@@ -55,6 +55,7 @@
                 <configuration>
                     <source>8</source>
                     <reportOutputDirectory>./docs</reportOutputDirectory>
+                    <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
             </plugin>
 
