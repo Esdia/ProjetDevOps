@@ -206,8 +206,9 @@ public class Dataframe {
     }
 
     /**
-     * Calcul la somme sur une colonne donnée uniquement de chiffre
+     * Calcul la somme sur une colonne composée de chiffre Entier, Flottant, ...
      *
+     * @param label
      * @return
      */
     public Float dataframeSum(String label) {
@@ -215,24 +216,78 @@ public class Dataframe {
             throw new IllegalArgumentException("Incorrect label parameter");
         }
         if (getRowType(label).getSuperclass() == Number.class) {
-            //It's a class like that extends Number
+            //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
             List<Object> myObjects = getRow(label);
             List<Float> myValues = new ArrayList<>();
             for (Object object : myObjects) {
                 myValues.add(Float.valueOf((Integer) object));
             }
-            return myValues.stream().reduce(0.0f, Float::sum);
+            return myValues.stream().reduce(0f, Float::sum);
         } else {
             throw new IllegalArgumentException("The column does not contain number values");
         }
     }
 
-    public Object min() {
-        return 0;
+    /**
+     * Trouve la plus petite valeur d'une colonne. Si les valeurs sont de type String alors la valeur la plus petite est calculée
+     * dans l'ordre alphabétique.
+     *
+     * @param label
+     * @return
+     */
+    public Object dataframeMin(String label) {
+        if(getRowType(label) == null){
+            throw new IllegalArgumentException("Incorrect label parameter");
+        }
+        if (getRowType(label).getSuperclass() == Number.class) {
+            //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
+            List<Object> myObjects = getRow(label);
+            List<Float> myValues = new ArrayList<>();
+            for (Object object : myObjects) {
+                myValues.add(Float.valueOf((Integer) object));
+            }
+            return Collections.min(myValues);
+        } else if(getRowType(label) == String.class)  {
+            List<Object> myObjects = getRow(label);
+            List<String> myValues = new ArrayList<>();
+            for (Object object : myObjects) {
+                myValues.add(String.valueOf(object));
+            }
+            return Collections.min(myValues);
+        }else{
+            throw new IllegalArgumentException("The column contain unknown type values");
+        }
     }
 
-    public Object max() {
-        return 0;
+    /**
+     * Trouve la plus petite valeur d'une colonne. Si les valeurs sont de type String alors la valeur la plus petite est calculée
+     * dans l'ordre alphabétique.
+     *
+     * @param label
+     * @return
+     */
+    public Object dataframeMax(String label) {
+        if(getRowType(label) == null){
+            throw new IllegalArgumentException("Incorrect label parameter");
+        }
+        if (getRowType(label).getSuperclass() == Number.class) {
+            //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
+            List<Object> myObjects = getRow(label);
+            List<Float> myValues = new ArrayList<>();
+            for (Object object : myObjects) {
+                myValues.add(Float.valueOf((Integer) object));
+            }
+            return Collections.max(myValues);
+        } else if(getRowType(label) == String.class) {
+            List<Object> myObjects = getRow(label);
+            List<String> myValues = new ArrayList<>();
+            for (Object object : myObjects) {
+                myValues.add(String.valueOf(object));
+            }
+            return Collections.max(myValues);
+        }else{
+            throw new IllegalArgumentException("The column contain unknown type values");
+        }
     }
 
 }

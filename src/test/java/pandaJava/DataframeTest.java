@@ -199,22 +199,48 @@ class DataframeTest {
     }
 
     @Test
-    public void testdataFrameSumBasicsInteger() throws Exception {
+    public void testDataFrameSumInteger() throws Exception {
         Dataframe myDataFrame = new Dataframe(generateCorrectArray());
         assertEquals(myDataFrame.dataframeSum("A"),50.0f);
     }
 
     @Test
-    public void testdataFrameSumBasicsIntegerLabelError() throws Exception {
+    public void testDataFrameSumIntegerLabelError() throws Exception {
         Dataframe myDataFrame = new Dataframe(generateCorrectArray());
         assertThrows(IllegalArgumentException.class, () -> myDataFrame.dataframeSum("1"));
     }
 
     @Test
-    public void testdataFrameMeanBasicsInteger() throws Exception {
+    public void testDataFrameMeanInteger() throws Exception {
         Dataframe myDataFrame = new Dataframe(generateCorrectArray());
         assertEquals(myDataFrame.dataframeMean("A"),10.0f);
     }
+
+    @Test
+    public void testDataFrameMinInteger() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.dataframeMin("A"),0.0f);
+    }
+
+    @Test
+    public void testDataFrameMinString() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArrayString());
+        assertEquals(myDataFrame.dataframeMin("A"),"AA");
+    }
+
+    @Test
+    public void testDataFrameMaxInteger() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.dataframeMax("A"),20.0f);
+    }
+
+    @Test
+    public void testDataFrameMaxString() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArrayString());
+        assertEquals(myDataFrame.dataframeMax("A"),"EA");
+    }
+
+
 
     private Object[][] generateCorrectArray () {
         int nb = 0;
@@ -223,6 +249,19 @@ class DataframeTest {
             for(int j = 0; j < 5; j++) {
                 test[i][j] = nb;
                 nb++;
+            }
+        }
+        return test;
+    }
+
+    private Object[][] generateCorrectArrayString () {
+        String nb;
+        Object[][] test = new Object[5][5];
+
+        for(int i = 0; i < 5; i++) {
+            for(int j = 0; j < 5; j++) {
+                nb = String.valueOf((char) ('A' + (i % 26))) + (char) ('A' + (j % 26));
+                test[i][j] = nb;
             }
         }
         return test;
