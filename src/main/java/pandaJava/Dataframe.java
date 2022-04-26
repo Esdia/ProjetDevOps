@@ -233,8 +233,8 @@ public class Dataframe {
     /**
      * Vérifie si le label donné en paramètre correspond bien à un label présent dans le dataframe
      *
-     * @param label
-     * @return
+     * @param label Indique la colonne du dataframe
+     * @return vrai si le label entré correspond bien à un label présent dans le dataframe
      */
     public boolean labelIsCorrect(String label){
         if(getRowType(label) == null){
