@@ -9,6 +9,11 @@ public class Dataframe {
     private Map<String, List<Object>> frameRows;
     private Map<String, Class> rowType;
 
+    /**
+     * Créer un DataFrame à partir d'un tableau donné en paramètre.
+     * @param array le tableau contenant les données pour la création du dataframe
+     * @throws MistypedRowException Erreur déclenchée si une colonne a plusieurs types
+     */
     public Dataframe(Object[][] array) throws MistypedRowException {
         try {
             String label = "";
@@ -49,9 +54,8 @@ public class Dataframe {
     }
 
     /**
-     * Create a DataFrame from a CSV file. We consider the CSV file to have only 3 types : boolean, String and Integer.
-     *
-     * @param path
+     * Créer un DataFrame à partir d'un fichier CSV. On considère que le CSV peut contenir 3 types : boolean, String et Integer.
+     * @param path la chemin d'accès au fichier
      */
     public Dataframe(String path) {
         try {
@@ -106,19 +110,39 @@ public class Dataframe {
         }
     }
 
+    /**
+     * Méthode permmetant de récupérer une colonne d'un dataframe à partir d'un label.
+     * @param label label correspondant à la colonne que l'on souhaite récupérer
+     * @return la liste d'objets de cette colonne
+     */
     public List<Object> getRow(String label) {
         return this.frameRows.get(label);
     }
 
+    /**
+     * Méthode permmetant de récupérer une ligne d'un dataframe à partir d'un index.
+     * @param index index correspondant à la ligne que l'on souhaite récupérer
+     * @return la liste d'objets de cette ligne
+     */
     public List<Object> getLine(int index) {
         return this.frameLines.get(index);
     }
 
+    /**
+     * Methode permettant de récupérer le type d'une colonne indiquée en paramètre.
+     * @param label la colonne pour laquel on souhaite savoir le type de ses valeurs
+     * @return la classe des valeurs de cette colonne
+     */
     public Class getRowType(String label) {
         return this.rowType.get(label);
     }
 
 
+    /**
+     * Méthode permettant d'afficher un dataframe sur la console.
+     * Pour le faire : System.out.println(myDataframe);
+     * @return le string contenant l'affichage souhaité
+     */
     public String toString() {
         int i = 0;
         StringBuilder sb = new StringBuilder();
@@ -140,6 +164,12 @@ public class Dataframe {
         return sb.toString();
     }
 
+    /**
+     * Affiche les premières lignes d'un dataframe
+     * @param nbLines indique le nombre de lignes à afficher
+     * @return un string contenant l'affichage souhaité
+     * @throws Exception Un mauvais nombre de lignes a été transmis
+     */
     public String toStringFirstLines(int nbLines) throws Exception {
         if (nbLines > this.frameLines.size()) {
             throw new IllegalArgumentException("Erreur : Il y a seulement : " + this.frameLines.size() + "lignes dans ce dataframe");
@@ -166,6 +196,12 @@ public class Dataframe {
         return sb.toString();
     }
 
+    /**
+     * Affiche les derniers lignes d'un dataframe
+     * @param nbLines indique le nombre de lignes à afficher
+     * @return un string contenant l'affichage souhaité
+     * @throws Exception Un mauvais nombre de lignes a été transmis
+     */
     public String toStringLastLines(int nbLines) throws Exception {
         if (nbLines > this.frameLines.size()) {
             throw new IllegalArgumentException("Erreur : Il y a seulement : " + this.frameLines.size() + " lignes dans ce dataframe");
@@ -194,6 +230,12 @@ public class Dataframe {
 
     //Statistics Parts
 
+    /**
+     * Vérifie si le label donné en paramètre correspond bien à un label présent dans le dataframe
+     *
+     * @param label
+     * @return
+     */
     public boolean labelIsCorrect(String label){
         if(getRowType(label) == null){
             throw new IllegalArgumentException("Incorrect label parameter");
@@ -204,7 +246,8 @@ public class Dataframe {
     /**
      * Calcul la moyenne sur une colonne donnée
      *
-     * @return
+     * @param label Indique sur quelle colonne appliquer le calcul
+     * @return La moyenne sur toutes les valeurs de la colonne
      */
     public Float dataframeMean(String label) {
         labelIsCorrect(label);
@@ -216,8 +259,8 @@ public class Dataframe {
     /**
      * Calcul la somme sur une colonne composée de chiffre Entier, Flottant, ...
      *
-     * @param label
-     * @return
+     * @param label Indique sur quelle colonne appliquer le calcul
+     * @return la somme des éléments d'une colonne
      */
     public Float dataframeSum(String label) {
         labelIsCorrect(label);
@@ -238,8 +281,8 @@ public class Dataframe {
      * Trouve la plus petite valeur d'une colonne. Si les valeurs sont de type String alors la valeur la plus petite est calculée
      * dans l'ordre alphabétique.
      *
-     * @param label
-     * @return
+     * @param label Indique sur quelle colonne appliquer le calcul
+     * @return La valeur la plus petite
      */
     public Object dataframeMin(String label) {
         labelIsCorrect(label);
@@ -267,8 +310,8 @@ public class Dataframe {
      * Trouve la plus petite valeur d'une colonne. Si les valeurs sont de type String alors la valeur la plus petite est calculée
      * dans l'ordre alphabétique.
      *
-     * @param label
-     * @return
+     * @param label Indique sur quelle colonne appliquer le calcul
+     * @return la valeur la plus grande
      */
     public Object dataframeMax(String label) {
         labelIsCorrect(label);
