@@ -296,6 +296,72 @@ class DataframeTest {
         assertThrows(IllegalArgumentException.class, () -> myDataFrame.toStringLastLines(0));
     }
 
+    @Test
+    public void testLabelIsCorrect() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.labelIsCorrect("A"),true);
+    }
+
+    @Test
+    public void testLabelIsNotCorrect() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertThrows(IllegalArgumentException.class, () -> myDataFrame.labelIsCorrect("1"));
+    }
+
+
+    @Test
+    public void testDataFrameMeanInteger() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.dataframeMean("A"),10.0f);
+    }
+
+
+    @Test
+    public void testDataFrameMeanString() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArrayString());
+        assertThrows(IllegalArgumentException.class, () -> myDataFrame.dataframeMean("A"));
+    }
+
+
+    @Test
+    public void testDataFrameMinInteger() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.dataframeMin("A"),0.0f);
+    }
+
+    @Test
+    public void testDataFrameMinString() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArrayString());
+        assertEquals(myDataFrame.dataframeMin("A"),"AA");
+    }
+
+    @Test
+    public void testDataFrameMinBool() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArrayBool());
+        assertThrows(IllegalArgumentException.class, () -> myDataFrame.dataframeMean("A"));
+    }
+
+
+    @Test
+    public void testDataFrameMaxInteger() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArray());
+        assertEquals(myDataFrame.dataframeMax("A"),20.0f);
+    }
+
+    @Test
+    public void testDataFrameMaxString() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArrayString());
+        assertEquals(myDataFrame.dataframeMax("A"),"EA");
+    }
+
+    @Test
+    public void testDataFrameMaxBool() throws Exception {
+        Dataframe myDataFrame = new Dataframe(generateCorrectArrayBool());
+        assertThrows(IllegalArgumentException.class, () -> myDataFrame.dataframeMax("A"));
+    }
+
+
+
     private Object[][] generateCorrectArray () {
         int nb = 0;
         Object[][] test = new Object[xSize][ySize];
@@ -303,6 +369,45 @@ class DataframeTest {
             for(int j = 0; j < ySize; j++) {
                 test[i][j] = nb;
                 nb++;
+            }
+        }
+        return test;
+    }
+
+    private Object[][] generateCorrectArrayString () {
+        String nb;
+        Object[][] test = new Object[5][5];
+
+        for(int i = 0; i < 5; i++) {
+            for(int j = 0; j < 5; j++) {
+                nb = String.valueOf((char) ('A' + (i % 26))) + (char) ('A' + (j % 26));
+                test[i][j] = nb;
+            }
+        }
+        return test;
+    }
+
+    private Object[][] generateCorrectArrayChar () {
+        char nb;
+        Object[][] test = new Object[5][5];
+
+        for(int i = 0; i < 5; i++) {
+            for(int j = 0; j < 5; j++) {
+                nb = (char) ('A' + (i % 26));
+                test[i][j] = nb;
+            }
+        }
+        return test;
+    }
+
+    private Object[][] generateCorrectArrayBool () {
+        boolean nb;
+        Object[][] test = new Object[5][5];
+
+        for(int i = 0; i < 5; i++) {
+            for(int j = 0; j < 5; j++) {
+                nb = (i % 2 == 0);
+                test[i][j] = nb;
             }
         }
         return test;
