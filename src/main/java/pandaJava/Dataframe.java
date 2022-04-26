@@ -194,14 +194,22 @@ public class Dataframe {
 
     //Statistics Parts
 
+    public boolean labelIsCorrect(String label){
+        if(getRowType(label) == null){
+            throw new IllegalArgumentException("Incorrect label parameter");
+        }
+        return true;
+    }
+
     /**
      * Calcul la moyenne sur une colonne donnée
      *
      * @return
      */
     public Float dataframeMean(String label) {
+        labelIsCorrect(label);
         int size = getRow(label).size();
-        float columnSum = (float) dataframeSum(label);
+        float columnSum = dataframeSum(label);
         return (columnSum/size);
     }
 
@@ -212,9 +220,7 @@ public class Dataframe {
      * @return
      */
     public Float dataframeSum(String label) {
-        if(getRowType(label) == null){
-            throw new IllegalArgumentException("Incorrect label parameter");
-        }
+        labelIsCorrect(label);
         if (getRowType(label).getSuperclass() == Number.class) {
             //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
             List<Object> myObjects = getRow(label);
@@ -236,9 +242,7 @@ public class Dataframe {
      * @return
      */
     public Object dataframeMin(String label) {
-        if(getRowType(label) == null){
-            throw new IllegalArgumentException("Incorrect label parameter");
-        }
+        labelIsCorrect(label);
         if (getRowType(label).getSuperclass() == Number.class) {
             //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
             List<Object> myObjects = getRow(label);
@@ -247,7 +251,7 @@ public class Dataframe {
                 myValues.add(Float.valueOf((Integer) object));
             }
             return Collections.min(myValues);
-        } else if(getRowType(label) == String.class)  {
+        } else if(getRowType(label) == String.class || getRowType(label) == Character.class)  {
             List<Object> myObjects = getRow(label);
             List<String> myValues = new ArrayList<>();
             for (Object object : myObjects) {
@@ -255,7 +259,7 @@ public class Dataframe {
             }
             return Collections.min(myValues);
         }else{
-            throw new IllegalArgumentException("The column contain unknown type values");
+            throw new IllegalArgumentException("The column contain unknown type values for min");
         }
     }
 
@@ -267,9 +271,7 @@ public class Dataframe {
      * @return
      */
     public Object dataframeMax(String label) {
-        if(getRowType(label) == null){
-            throw new IllegalArgumentException("Incorrect label parameter");
-        }
+        labelIsCorrect(label);
         if (getRowType(label).getSuperclass() == Number.class) {
             //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
             List<Object> myObjects = getRow(label);
@@ -278,7 +280,7 @@ public class Dataframe {
                 myValues.add(Float.valueOf((Integer) object));
             }
             return Collections.max(myValues);
-        } else if(getRowType(label) == String.class) {
+        } else if(getRowType(label) == String.class || getRowType(label) == Character.class) {
             List<Object> myObjects = getRow(label);
             List<String> myValues = new ArrayList<>();
             for (Object object : myObjects) {
@@ -286,7 +288,7 @@ public class Dataframe {
             }
             return Collections.max(myValues);
         }else{
-            throw new IllegalArgumentException("The column contain unknown type values");
+            throw new IllegalArgumentException("The column contain unknown type values for max");
         }
     }
 
