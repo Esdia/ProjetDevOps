@@ -3,6 +3,10 @@ package pandaJava;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Classe DataFrame représentant des données sous formes de tableaux où les colonnes sont identifiés par un label et ne contiennet qu'un type d'objet.
+ * Les lignes peuvent contenir plusieurs types d'objets et sont indexées par un entier.
+ */
 public class Dataframe {
 
     private Map<Integer, List<Object>> frameLines;
@@ -11,9 +15,9 @@ public class Dataframe {
     private Map<String, Integer> indexLabel;
 
     /**
-     * Créer un DataFrame à partir d'un tableau donné en paramètre.
-     * @param array le tableau contenant les données pour la création du dataframe
-     * @throws MistypedRowException Erreur déclenchée si une colonne a plusieurs types
+     * Création d'un DataFrame à partir d'un tableau simple à deux dimensions.
+     * @param array Tableau d'objets à deux dimensions pouvant être convertis en dataFram. Les colonnes doivent donc avoir des types d'objet constant.
+     * @throws MistypedRowException Quand le tableau rentré en argument est non convetible en dataFrame.
      */
     public Dataframe(Object[][] array) throws MistypedRowException {
         try {
@@ -56,8 +60,8 @@ public class Dataframe {
     }
 
     /**
-     * Créer un DataFrame à partir d'un fichier CSV. On considère que le CSV peut contenir 3 types : boolean, String et Integer.
-     * @param path la chemin d'accès au fichier
+     * Création d'un DataFrame à partir d'un fichier CSV. On considère qu'il ne peut y avoir que 3 types dans le fichier CSV : Integer, boolean et String.
+     * @param path Chemin vers le fichier CSV à convertir en DataFrame.
      */
     public Dataframe (String path) {
         try {
@@ -116,49 +120,48 @@ public class Dataframe {
     }
 
     /**
-     * Renvoie une valeur du DataFrame à un index et label donnés.
-     * @param index
-     * @param label
-     * @return valeur
+     * Renvoie la valeur d'une cellule du DataFrame à un index et label donnés.
+     * @param index Ligne de la cellule.
+     * @param label Colonne de la cellule.
+     * @return valeur de la cellule.
      */
     public Object getValue (int index, String label) {
         return this.frameLines.get(index).get(this.indexLabel.get(label));
     }
 
-
     /**
-     * Méthode permmetant de récupérer une colonne d'un dataframe à partir d'un label.
-     * @param label label correspondant à la colonne que l'on souhaite récupérer
-     * @return la liste d'objets de cette colonne
+     * Renvoie la liste d'objets d'une colonne à partir de son label.
+     * @param label Label de la colonne.
+     * @return une liste d'objets composant la colonne sélectionnée.
      */
     public List<Object> getRow(String label) {
         return this.frameRows.get(label);
     }
 
     /**
-     * Méthode permmetant de récupérer une ligne d'un dataframe à partir d'un index.
-     * @param index index correspondant à la ligne que l'on souhaite récupérer
-     * @return la liste d'objets de cette ligne
+     * Renvoie la liste d'objets d'une ligne à partir de son index.
+     * @param index Index d'une ligne.
+     * @return la liste d'objets composant la ligne sélectionnée.
      */
     public List<Object> getLine(int index) {
         return this.frameLines.get(index);
     }
 
     /**
-     * Methode permettant de récupérer le type d'une colonne indiquée en paramètre.
-     * @param label la colonne pour laquel on souhaite savoir le type de ses valeurs
-     * @return la classe des valeurs de cette colonne
+     * Renvoie la classe des objets d'une colonne à partir de son label.
+     * @param label Label d'une colonne.
+     * @return la classe à laquelle appartiennent les objets de la colonne.
      */
     public Class getRowType(String label) {
         return this.rowType.get(label);
     }
 
     /**
-     * Renvvoie en sous-ensemble de lignes en fonction de deux index. Les lignes renvoyées sont comprises dans l'intervalle index1 et index2 avec les bornes incluses.
+     * Renvoie en sous-ensemble de lignes en fonction de deux index. Les lignes renvoyées sont comprises dans l'intervalle index1 et index2 avec les bornes incluses.
      * Le premier index ne peut pas être plus grand que le deuxième.
-     * @param index1
-     * @param index2
-     * @return sous ensemble de lignes
+     * @param index1 Index de la ligne correspondant à la borne inférieur de l'intervalle de lignes que l'on veut sélectionner.
+     * @param index2 Index de la ligne correspondant à la borne supérieur de l'intervalle de lignes que l'on veut sélectionner.
+     * @return sous ensemble de lignes.
      */
     public Map<Integer, List<Object>> getSubLines (int index1, int index2) {
         Map<Integer, List<Object>> lines = new HashMap<>();
@@ -188,8 +191,8 @@ public class Dataframe {
      * Renvoie un sous ensemble de lignes en fonction de booléens.
      * Chaque booléen passé en paramètre correspond à un index et on récupère la ligne si l'index correspondant est à true en paramètre.
      * Par exemple si le premier pramètre est à true, on garde la ligne d'index 0.
-     * @param index
-     * @return sous ensemble de lignes
+     * @param index Suite d'index correspondant à des lignes. La place du booléean correspond à l'index d'une ligne.
+     * @return sous ensemble de lignes.
      */
     public Map<Integer, List<Object>> getSubLines (boolean... index) {
         Map<Integer, List<Object>> lines = new HashMap<>();
@@ -216,10 +219,10 @@ public class Dataframe {
 
     /**
      * Renvoie un sous ensemble de lignes en fonction d'un label et d'une expression lambda. Filte les lignes en fonction des valeurs d'une colonne.
-     * Par exemple pour les paramètres : (age,(x) -> x > 5); on va récupérer toutes les lignes où l'âge est supérieur à 5.
-     * @param label
-     * @param evaluation
-     * @return sous ensemble de lignes
+     * Par exemple pour les paramètres : (age,(x) -&gt; x &gt; 5); on va récupérer toutes les lignes où l'âge est supérieur à 5.
+     * @param label Label correspondant à une colonne.
+     * @param evaluation Expression booléenne évaluant la donnée d'une cellule du dataFrame. On peut par exemple sélectionner les valeurs x de la colonne pour x supérieur à 5.
+     * @return sous ensemble de lignes.
      */
     public Map<Integer, List<Object>> getSubLines (String label, Evaluate evaluation) {
         Map<Integer, List<Object>> lines = new HashMap<>();
@@ -247,7 +250,7 @@ public class Dataframe {
     /**
      * Renvoie en sous ensemble de colonnes en fonction de labels.
      * Toutes les colonnes qui ont un label correspondant à un de ceux en paramètre est ajoutée au sous-ensemble de retour.
-     * @param label
+     * @param label Suite de labels correspondant à des colonnes.
      * @return sous ensemble de colonnes.
      */
     public Map<String, List<Object>> getSubRows (String... label) {
