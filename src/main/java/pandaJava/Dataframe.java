@@ -19,7 +19,7 @@ public class Dataframe {
      * @param array Tableau d'objets à deux dimensions pouvant être convertis en dataFram. Les colonnes doivent donc avoir des types d'objet constant.
      * @throws MistypedRowException Quand le tableau rentré en argument est non convetible en dataFrame.
      */
-    public Dataframe (Object[][] array) throws MistypedRowException {
+    public Dataframe(Object[][] array) throws MistypedRowException {
         try {
             String label = "";
             this.frameRows = new HashMap<>();
@@ -132,9 +132,9 @@ public class Dataframe {
     /**
      * Renvoie la liste d'objets d'une colonne à partir de son label.
      * @param label Label de la colonne.
-     * @return une liste d'objets composant le colonne sélectionnée.
+     * @return une liste d'objets composant la colonne sélectionnée.
      */
-    public List<Object> getRow (String label) {
+    public List<Object> getRow(String label) {
         return this.frameRows.get(label);
     }
 
@@ -143,7 +143,7 @@ public class Dataframe {
      * @param index Index d'une ligne.
      * @return la liste d'objets composant la ligne sélectionnée.
      */
-    public List<Object> getLine (int index) {
+    public List<Object> getLine(int index) {
         return this.frameLines.get(index);
     }
 
@@ -152,12 +152,12 @@ public class Dataframe {
      * @param label Label d'une colonne.
      * @return la classe à laquelle appartiennent les objets de la colonne.
      */
-    public Class getRowType (String label) {
+    public Class getRowType(String label) {
         return this.rowType.get(label);
     }
 
     /**
-     * Renvvoie en sous-ensemble de lignes en fonction de deux index. Les lignes renvoyées sont comprises dans l'intervalle index1 et index2 avec les bornes incluses.
+     * Renvoie en sous-ensemble de lignes en fonction de deux index. Les lignes renvoyées sont comprises dans l'intervalle index1 et index2 avec les bornes incluses.
      * Le premier index ne peut pas être plus grand que le deuxième.
      * @param index1 Index de la ligne correspondant à la borne inférieur de l'intervalle de lignes que l'on veut sélectionner.
      * @param index2 Index de la ligne correspondant à la borne supérieur de l'intervalle de lignes que l'on veut sélectionner.
@@ -272,20 +272,25 @@ public class Dataframe {
         return rows;
     }
 
-    public String toString(){
+    /**
+     * Méthode permettant d'afficher un dataframe sur la console.
+     * Pour le faire : System.out.println(myDataframe);
+     * @return le string contenant l'affichage souhaité
+     */
+    public String toString() {
         int i = 0;
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%1s"," "));//For the first empty case
-        for (String key : this.frameRows.keySet() ) {
+        sb.append(String.format("%1s", " "));//For the first empty case
+        for (String key : this.frameRows.keySet()) {
             sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
         }
         sb.append('\n');
         //Parcours des lignes du dataframe
-        while(this.frameLines.size() > i) {
+        while (this.frameLines.size() > i) {
             List<Object> line = getLine(i);
-            sb.append(String.format("%1s",i));//Print column indices (not in the dataframe)
+            sb.append(String.format("%1s", i));//Print column indices (not in the dataframe)
             for (Object elem : line) {
-                sb.append(String.format("%8s",elem));//Print dataframe elements
+                sb.append(String.format("%8s", elem));//Print dataframe elements
             }
             sb.append('\n');
             i++;
@@ -293,25 +298,31 @@ public class Dataframe {
         return sb.toString();
     }
 
+    /**
+     * Affiche les premières lignes d'un dataframe
+     * @param nbLines indique le nombre de lignes à afficher
+     * @return un string contenant l'affichage souhaité
+     * @throws Exception Un mauvais nombre de lignes a été transmis
+     */
     public String toStringFirstLines(int nbLines) throws Exception {
-        if(nbLines > this.frameLines.size()){
+        if (nbLines > this.frameLines.size()) {
             throw new IllegalArgumentException("Erreur : Il y a seulement : " + this.frameLines.size() + "lignes dans ce dataframe");
-        }else if(nbLines<=0){
+        } else if (nbLines <= 0) {
             throw new IllegalArgumentException("Veuillez choisir un nombre de lignes supérieur à 0");
         }
         int i = 0;
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%1s"," "));//For the first empty case
-        for (String key : this.frameRows.keySet() ) {
+        sb.append(String.format("%1s", " "));//For the first empty case
+        for (String key : this.frameRows.keySet()) {
             sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
         }
         sb.append('\n');
         //Parcours des lignes du dataframe
-        while(nbLines > i) {
+        while (nbLines > i) {
             List<Object> line = getLine(i);
-            sb.append(String.format("%1s",i));//Print column indices (not in the dataframe)
+            sb.append(String.format("%1s", i));//Print column indices (not in the dataframe)
             for (Object elem : line) {
-                sb.append(String.format("%8s",elem));//Print dataframe elements
+                sb.append(String.format("%8s", elem));//Print dataframe elements
             }
             sb.append('\n');
             i++;
@@ -319,30 +330,143 @@ public class Dataframe {
         return sb.toString();
     }
 
+    /**
+     * Affiche les derniers lignes d'un dataframe
+     * @param nbLines indique le nombre de lignes à afficher
+     * @return un string contenant l'affichage souhaité
+     * @throws Exception Un mauvais nombre de lignes a été transmis
+     */
     public String toStringLastLines(int nbLines) throws Exception {
-        if(nbLines > this.frameLines.size()){
+        if (nbLines > this.frameLines.size()) {
             throw new IllegalArgumentException("Erreur : Il y a seulement : " + this.frameLines.size() + " lignes dans ce dataframe");
-        }else if(nbLines<=0){
+        } else if (nbLines <= 0) {
             throw new IllegalArgumentException("Veuillez choisir un nombre de lignes supérieur à 0");
         }
-        int i = this.frameLines.size()-nbLines;
+        int i = this.frameLines.size() - nbLines;
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%1s"," "));//For the first empty case
-        for (String key : this.frameRows.keySet() ) {
+        sb.append(String.format("%1s", " "));//For the first empty case
+        for (String key : this.frameRows.keySet()) {
             sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
         }
         sb.append('\n');
         //Parcours des lignes du dataframe
-        while(this.frameLines.size() > i) {
+        while (this.frameLines.size() > i) {
             List<Object> line = getLine(i);
-            sb.append(String.format("%1s",i));//Print column indices (not in the dataframe)
+            sb.append(String.format("%1s", i));//Print column indices (not in the dataframe)
             for (Object elem : line) {
-                sb.append(String.format("%8s",elem));//Print dataframe elements
+                sb.append(String.format("%8s", elem));//Print dataframe elements
             }
             sb.append('\n');
             i++;
         }
         return sb.toString();
     }
-  
+
+    //Statistics Parts
+
+    /**
+     * Vérifie si le label donné en paramètre correspond bien à un label présent dans le dataframe
+     *
+     * @param label Indique la colonne du dataframe
+     * @return vrai si le label entré correspond bien à un label présent dans le dataframe
+     */
+    public boolean labelIsCorrect(String label){
+        if(getRowType(label) == null){
+            throw new IllegalArgumentException("Incorrect label parameter");
+        }
+        return true;
+    }
+
+    /**
+     * Calcul la moyenne sur une colonne donnée
+     *
+     * @param label Indique sur quelle colonne appliquer le calcul
+     * @return La moyenne sur toutes les valeurs de la colonne
+     */
+    public Float dataframeMean(String label) {
+        labelIsCorrect(label);
+        int size = getRow(label).size();
+        float columnSum = dataframeSum(label);
+        return (columnSum/size);
+    }
+
+    /**
+     * Calcul la somme sur une colonne composée de chiffre Entier, Flottant, ...
+     *
+     * @param label Indique sur quelle colonne appliquer le calcul
+     * @return la somme des éléments d'une colonne
+     */
+    public Float dataframeSum(String label) {
+        labelIsCorrect(label);
+        if (getRowType(label).getSuperclass() == Number.class) {
+            //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
+            List<Object> myObjects = getRow(label);
+            List<Float> myValues = new ArrayList<>();
+            for (Object object : myObjects) {
+                myValues.add(Float.valueOf((Integer) object));
+            }
+            return myValues.stream().reduce(0f, Float::sum);
+        } else {
+            throw new IllegalArgumentException("The column does not contain number values");
+        }
+    }
+
+    /**
+     * Trouve la plus petite valeur d'une colonne. Si les valeurs sont de type String alors la valeur la plus petite est calculée
+     * dans l'ordre alphabétique.
+     *
+     * @param label Indique sur quelle colonne appliquer le calcul
+     * @return La valeur la plus petite
+     */
+    public Object dataframeMin(String label) {
+        labelIsCorrect(label);
+        if (getRowType(label).getSuperclass() == Number.class) {
+            //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
+            List<Object> myObjects = getRow(label);
+            List<Float> myValues = new ArrayList<>();
+            for (Object object : myObjects) {
+                myValues.add(Float.valueOf((Integer) object));
+            }
+            return Collections.min(myValues);
+        } else if(getRowType(label) == String.class || getRowType(label) == Character.class)  {
+            List<Object> myObjects = getRow(label);
+            List<String> myValues = new ArrayList<>();
+            for (Object object : myObjects) {
+                myValues.add(String.valueOf(object));
+            }
+            return Collections.min(myValues);
+        }else{
+            throw new IllegalArgumentException("The column contain unknown type values for min");
+        }
+    }
+
+    /**
+     * Trouve la plus petite valeur d'une colonne. Si les valeurs sont de type String alors la valeur la plus petite est calculée
+     * dans l'ordre alphabétique.
+     *
+     * @param label Indique sur quelle colonne appliquer le calcul
+     * @return la valeur la plus grande
+     */
+    public Object dataframeMax(String label) {
+        labelIsCorrect(label);
+        if (getRowType(label).getSuperclass() == Number.class) {
+            //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
+            List<Object> myObjects = getRow(label);
+            List<Float> myValues = new ArrayList<>();
+            for (Object object : myObjects) {
+                myValues.add(Float.valueOf((Integer) object));
+            }
+            return Collections.max(myValues);
+        } else if(getRowType(label) == String.class || getRowType(label) == Character.class) {
+            List<Object> myObjects = getRow(label);
+            List<String> myValues = new ArrayList<>();
+            for (Object object : myObjects) {
+                myValues.add(String.valueOf(object));
+            }
+            return Collections.max(myValues);
+        }else{
+            throw new IllegalArgumentException("The column contain unknown type values for max");
+        }
+    }
+
 }
