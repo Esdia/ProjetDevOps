@@ -428,4 +428,73 @@ class DataframeTest {
         return test;
     }
 
+    @Test
+    void testLoc() {
+        Dataframe dataframe = d2.loc(0);
+        assertEquals(18, dataframe.getValue(0, "age"));
+        assertEquals("Fourier", dataframe.getValue(0, "nom"));
+        assertTrue((Boolean) dataframe.getValue(0, "adulte"));
+
+        dataframe = d2.loc(1);
+        assertEquals(13, dataframe.getValue(0, "age"));
+        assertEquals("Lasalle", dataframe.getValue(0, "nom"));
+        assertFalse((Boolean) dataframe.getValue(0, "adulte"));
+    }
+
+    @Test
+    void testLoc1() {
+        Dataframe dataframe = d2.loc(0, 1);
+        assertEquals(18, dataframe.getValue(0, "age"));
+        assertEquals("Fourier", dataframe.getValue(0, "nom"));
+        assertTrue((Boolean) dataframe.getValue(0, "adulte"));
+
+        assertEquals(13, dataframe.getValue(1, "age"));
+        assertEquals("Lasalle", dataframe.getValue(1, "nom"));
+        assertFalse((Boolean) dataframe.getValue(1, "adulte"));
+    }
+
+    @Test
+    void testLoc2() {
+        Dataframe dataframe = d2.loc("age");
+        assertEquals(18, dataframe.getValue(0, "age"));
+        assertEquals(13, dataframe.getValue(1, "age"));
+    }
+
+    @Test
+    void testLoc3() {
+        Dataframe dataframe = d2.loc("adulte", "nom");
+        assertTrue((Boolean) dataframe.getValue(0, "adulte"));
+        assertEquals("Fourier", dataframe.getValue(0, "nom"));
+
+        assertFalse((Boolean) dataframe.getValue(1, "adulte"));
+        assertEquals("Lasalle", dataframe.getValue(1, "nom"));
+    }
+
+    @Test
+    void testLoc4() {
+        Dataframe dataframe = d2.loc(1, "adulte");
+        assertFalse((Boolean) dataframe.getValue(0, "adulte"));
+    }
+
+    @Test
+    void testLoc5() {
+        Dataframe dataframe = d2.loc(false, true);
+        assertEquals(13, dataframe.getValue(0, "age"));
+        assertEquals("Lasalle", dataframe.getValue(0, "nom"));
+        assertFalse((Boolean) dataframe.getValue(0, "adulte"));
+
+    }
+
+    @Test
+    void testLoc6() {
+        Dataframe dataframe = d2.loc("age", x -> x >= 18);
+        assertEquals(18, dataframe.getValue(0, "age"));
+        assertEquals("Fourier", dataframe.getValue(0, "nom"));
+        assertTrue((Boolean) dataframe.getValue(0, "adulte"));
+
+        dataframe = d2.loc("age", x -> x < 18);
+        assertEquals(13, dataframe.getValue(0, "age"));
+        assertEquals("Lasalle", dataframe.getValue(0, "nom"));
+        assertFalse((Boolean) dataframe.getValue(0, "adulte"));
+    }
 }

@@ -13,6 +13,7 @@ public class Dataframe {
     private Map<String, List<Object>> frameRows;
     private Map<String, Class> rowType;
     private Map<String, Integer> indexLabel;
+    private Map<Integer, String> labelIndex;
 
     /**
      * Création d'un DataFrame à partir d'un tableau simple à deux dimensions.
@@ -27,6 +28,7 @@ public class Dataframe {
             this.frameLines = new HashMap<>();
             this.rowType = new HashMap<>();
             this.indexLabel = new HashMap<>();
+            this.labelIndex = new HashMap<>();
             //Parcours des colonnes
             for (int j = 0; j < array[0].length; j++) {
                 int value = j;
@@ -37,6 +39,7 @@ public class Dataframe {
                 label = sb.reverse().toString();
                 this.frameRows.put(label, new ArrayList<>());
                 this.indexLabel.put(label, j);
+                this.labelIndex.put(j, label);
                 Object firstElemRow = array[0][j];
                 this.rowType.put(label, Class.forName(firstElemRow.getClass().getName()));
                 //Parcours des lignes
@@ -71,6 +74,7 @@ public class Dataframe {
             this.frameLines = new HashMap<>();
             this.rowType = new HashMap<>();
             this.indexLabel = new HashMap<>();
+            this.labelIndex = new HashMap<>();
             File file = new File(path);
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st = "";
@@ -90,6 +94,7 @@ public class Dataframe {
                     for (int j = 0; j < labels.length; j++) {
                         this.frameRows.put(labels[j], new ArrayList<>());
                         this.indexLabel.put(labels[j], j);
+                        this.labelIndex.put(j, labels[j]);
                         this.rowType.put(labels[j], Class.forName("java.lang." + types[j]));
                     }
                     i++;
@@ -479,4 +484,206 @@ public class Dataframe {
         }
     }
 
+    /**
+     * Cette méthode crée un nouveau DataFrame composé d'une liste de lignes données et des labels du DataFrame actuel.
+     *
+     * @param lines Les lignes qui forment le nouveau DataFrame
+     */
+    private Dataframe createNewDataframe(List<List<Object>> lines) {
+        int height = lines.size();
+        if (height == 0) {
+            try {
+                return new Dataframe(new Object[0][0]);
+            } catch (MistypedRowException e) {
+                /* Should never happen */
+                e.printStackTrace();
+            }
+        }
+
+        int width = lines.get(0).size();
+
+        /* Convert the given lines to an object array */
+        Object[][] array = new Object[height][width];
+        for (int i = 0; i < height; i++) {
+            array[i] = lines.get(i).toArray();
+        }
+
+        /* Create the DataFrame */
+        Dataframe dataframe;
+        try {
+            dataframe = new Dataframe(array);
+        } catch (MistypedRowException e) {
+            /* Should never happen */
+            e.printStackTrace();
+            return null;
+        }
+
+        /* Replace the placeholder labels with the actual labels */
+        for (Integer index : this.labelIndex.keySet()) {
+            String label = this.labelIndex.get(index);
+
+            String old_label = dataframe.labelIndex.get(index);
+            dataframe.indexLabel.remove(old_label);
+            dataframe.indexLabel.put(label, index);
+            dataframe.labelIndex.put(index, label);
+
+            List<Object> column = dataframe.frameRows.get(old_label);
+            dataframe.frameRows.put(label, column);
+            dataframe.frameRows.remove(old_label);
+        }
+
+        return dataframe;
+    }
+
+    /**
+     * Cette méthode crée un nouveau DataFrame composé d'une liste de lignes données, et qui ne contient que les colonnes
+     * correspondant aux labels donnés
+     *
+     * @param lines        Les lignes qui forment le nouveau DataFrame
+     * @param labelsToKeep Les labels des colonnes que l'on garde.
+     * @return Le nouveau DataFrame
+     */
+    private Dataframe createNewDataframe(List<List<Object>> lines, List<String> labelsToKeep) {
+        Dataframe dataframe = this.createNewDataframe(lines);
+        assert dataframe != null;
+
+        /* Remove the columns from the Dataframe and store the removed label's indexes */
+        List<Integer> indexesToRemove = new Vector<>();
+        for (String label : this.indexLabel.keySet()) {
+            if (!labelsToKeep.contains(label)) {
+                dataframe.frameRows.remove(label);
+                indexesToRemove.add(this.indexLabel.get(label));
+            }
+        }
+
+        /* We sort the indexes in descending order to prevent issues when removing from the lines */
+        indexesToRemove.sort(Integer::compareTo);
+        Collections.reverse(indexesToRemove);
+
+        /* In each line we remove the indexes corresponding to the removed columns to keep the data consistent */
+        for (int i : indexesToRemove) {
+            for (int j = 0; j < this.frameLines.size(); j++) {
+                dataframe.frameLines.get(j).remove(i);
+            }
+        }
+
+        /* We update the label index tables */
+        dataframe.labelIndex.clear();
+        dataframe.indexLabel.clear();
+        List<Integer> keptLabelIndexes = new Vector<>();
+        for (String label : labelsToKeep) {
+            keptLabelIndexes.add(this.indexLabel.get(label));
+        }
+        keptLabelIndexes.sort(Integer::compareTo);
+        for (int i = 0; i < keptLabelIndexes.size(); i++) {
+            int old_index = keptLabelIndexes.get(i);
+            String label = this.labelIndex.get(old_index);
+
+            dataframe.indexLabel.put(label, i);
+            dataframe.labelIndex.put(i, label);
+        }
+
+        return dataframe;
+    }
+
+    /**
+     * Retourne un nouveau DataFrame qui ne contient que la ligne à l'indice donné.
+     *
+     * @param index L'indice de la ligne qu'on souhaite récupérer.
+     * @return Un nouveau DataFrame qui ne contient que la ligne à l'indice donné.
+     */
+    public Dataframe loc(int index) {
+        List<List<Object>> lines = new Vector<>();
+        lines.add(this.getLine(index));
+
+        return this.createNewDataframe(lines);
+    }
+
+    /**
+     * Retourne un nouveau DataFrame qui ne contient que les lignes aux indices donnés.
+     *
+     * @param indexes Les indices des lignes qu'on souhaite récupérer.
+     * @return Un nouveau DataFrame qui ne contient que les lignes aux indices donnés.
+     */
+    public Dataframe loc(int... indexes) {
+        List<List<Object>> lines = new Vector<>();
+
+        for (int i : indexes) {
+            lines.add(this.getLine(i));
+        }
+
+        return this.createNewDataframe(lines);
+    }
+
+    /**
+     * Retourne un nouveau DataFrame qui ne contient que la colonne correspondant au label donné.
+     *
+     * @param label Le label de la colonne qu'on souhaite récupérer.
+     * @return Un nouveau DataFrame qui ne contient que la colonne correspondant au label donné.
+     */
+    public Dataframe loc(String label) {
+        List<List<Object>> lines = new Vector<>(this.frameLines.values());
+        List<String> labelsToKeep = new Vector<>();
+        labelsToKeep.add(label);
+
+        return this.createNewDataframe(lines, labelsToKeep);
+    }
+
+    /**
+     * Retourne un nouveau DataFrame qui ne contient que les colonnes correspondant aux labels donnés.
+     *
+     * @param labels Les labels des colonnes qu'on souhaite récupérer.
+     * @return Un nouveau DataFrame qui ne contient que les colonnes correspondant aux labels donnés.
+     */
+    public Dataframe loc(String... labels) {
+        List<List<Object>> lines = new Vector<>(this.frameLines.values());
+        List<String> labelsToKeep = new Vector<>(Arrays.asList(labels));
+        return this.createNewDataframe(lines, labelsToKeep);
+    }
+
+    /**
+     * Retourne un nouveau DataFrame filtré en ligne et en colonnes.
+     * <p>
+     * Équivalent à loc(index).loc(label)
+     *
+     * @param index L'indice de la ligne qu'on souhaite récupérer.
+     * @param label Le label de la colonne qu'on souhaite récupérer.
+     * @return Un nouveau DataFrame filtré en ligne et en colonnes.
+     */
+    public Dataframe loc(int index, String label) {
+        return this.loc(index).loc(label);
+    }
+
+    /**
+     * Retourne un nouveau DataFrame filtré en lignes.
+     * <p>
+     * Pour chaque indice i dans le tableau donné en argument, la ligne i du DataFrame n'est gardée que si le booléen
+     * d'indice i dans le tableau vaut True.
+     *
+     * @param indexes Un tableau contenant autant de booléen que le DataFrame contient de lignes
+     * @return Un nouveau DataFrame filtré en lignes.
+     */
+    public Dataframe loc(boolean... indexes) {
+        Map<Integer, List<Object>> lines = this.getSubLines(indexes);
+
+        List<List<Object>> _lines = new Vector<>(lines.values());
+        return this.createNewDataframe(_lines);
+    }
+
+    /**
+     * Retourne un nouveau DataFrame filtré par un prédicat.
+     * <p>
+     * Pour chaque ligne, la case dans la colonne correspondant au label donné est testée par le prédicat. La ligne est
+     * conservée dans le nouveau DataFrame si le prédicat renvoie True.
+     *
+     * @param label      La colonne utilisée pour évaluer le prédicat
+     * @param evaluation Le prédicat utilisé pour filtrer le DataFrame
+     * @return Un nouveau DataFrame filtré par le prédicat.
+     */
+    public Dataframe loc(String label, Evaluate evaluation) {
+        Map<Integer, List<Object>> lines = this.getSubLines(label, evaluation);
+
+        List<List<Object>> _lines = new Vector<>(lines.values());
+        return this.createNewDataframe(_lines);
+    }
 }
