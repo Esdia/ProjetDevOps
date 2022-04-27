@@ -10,8 +10,8 @@ import java.util.*;
 public class Dataframe {
 
     private Map<Integer, List<Object>> frameLines;
-    private Map<String, List<Object>> frameRows;
-    private Map<String, Class> rowType;
+    private Map<String, List<Object>> frameColumns;
+    private Map<String, Class> columnType;
     private Map<String, Integer> indexLabel;
     private Map<Integer, String> labelIndex;
 
@@ -24,9 +24,9 @@ public class Dataframe {
     public Dataframe(Object[][] array) throws MistypedRowException {
         try {
             String label = "";
-            this.frameRows = new HashMap<>();
+            this.frameColumns = new HashMap<>();
             this.frameLines = new HashMap<>();
-            this.rowType = new HashMap<>();
+            this.columnType = new HashMap<>();
             this.indexLabel = new HashMap<>();
             this.labelIndex = new HashMap<>();
             //Parcours des colonnes
@@ -37,21 +37,21 @@ public class Dataframe {
                 while ((value = (value / 26 - 1)) >= 0)
                     sb.append((char) ('A' + (value % 26)));
                 label = sb.reverse().toString();
-                this.frameRows.put(label, new ArrayList<>());
+                this.frameColumns.put(label, new ArrayList<>());
                 this.indexLabel.put(label, j);
                 this.labelIndex.put(j, label);
                 Object firstElemRow = array[0][j];
-                this.rowType.put(label, Class.forName(firstElemRow.getClass().getName()));
+                this.columnType.put(label, Class.forName(firstElemRow.getClass().getName()));
                 //Parcours des lignes
                 for (int i = 0; i < array.length; i++) {
                     if (!this.frameLines.containsKey(i))
                         this.frameLines.put(i, new ArrayList<>());
                     Object e = array[i][j];
-                    if (!(e.getClass().getName().equals(this.rowType.get(label).getName())))
+                    if (!(e.getClass().getName().equals(this.columnType.get(label).getName())))
                         throw new MistypedRowException();
                     else {
                         this.frameLines.get(i).add(array[i][j]);
-                        this.frameRows.get(label).add(array[i][j]);
+                        this.frameColumns.get(label).add(array[i][j]);
                     }
                 }
             }
@@ -70,9 +70,9 @@ public class Dataframe {
      */
     public Dataframe(String path) {
         try {
-            this.frameRows = new HashMap<>();
+            this.frameColumns = new HashMap<>();
             this.frameLines = new HashMap<>();
-            this.rowType = new HashMap<>();
+            this.columnType = new HashMap<>();
             this.indexLabel = new HashMap<>();
             this.labelIndex = new HashMap<>();
             File file = new File(path);
@@ -92,10 +92,10 @@ public class Dataframe {
                 else if (i == 1) {
                     labels = st.split(";");
                     for (int j = 0; j < labels.length; j++) {
-                        this.frameRows.put(labels[j], new ArrayList<>());
+                        this.frameColumns.put(labels[j], new ArrayList<>());
                         this.indexLabel.put(labels[j], j);
                         this.labelIndex.put(j, labels[j]);
-                        this.rowType.put(labels[j], Class.forName("java.lang." + types[j]));
+                        this.columnType.put(labels[j], Class.forName("java.lang." + types[j]));
                     }
                     i++;
                 }
@@ -105,7 +105,7 @@ public class Dataframe {
                     this.frameLines.put(lineIndex, new ArrayList<>());
                     String[] line = st.split(";");
                     for (int j = 0; j < line.length; j++) {
-                        Class c = this.rowType.get(labels[j]); //On récupère la classe de la colonne
+                        Class c = this.columnType.get(labels[j]); //On récupère la classe de la colonne
                         Object elem;
                         //On cast l'élément en String, en Int ou en booléen en fonction du type de la colonne.
                         if (c.getName().equals("java.lang.Integer"))
@@ -115,7 +115,7 @@ public class Dataframe {
                         else
                             elem = line[j];
                         this.frameLines.get(lineIndex).add(elem);
-                        this.frameRows.get(labels[j]).add(elem);
+                        this.frameColumns.get(labels[j]).add(elem);
                     }
                     lineIndex++;
                 }
@@ -142,8 +142,8 @@ public class Dataframe {
      * @param label Label de la colonne.
      * @return une liste d'objets composant la colonne sélectionnée.
      */
-    public List<Object> getRow(String label) {
-        return this.frameRows.get(label);
+    public List<Object> getColumn(String label) {
+        return this.frameColumns.get(label);
     }
 
     /**
@@ -162,8 +162,8 @@ public class Dataframe {
      * @param label Label d'une colonne.
      * @return la classe à laquelle appartiennent les objets de la colonne.
      */
-    public Class getRowType(String label) {
-        return this.rowType.get(label);
+    public Class getColumnType(String label) {
+        return this.columnType.get(label);
     }
 
     /**
@@ -240,7 +240,7 @@ public class Dataframe {
     public Map<Integer, List<Object>> getSubLines(String label, Evaluate evaluation) {
         Map<Integer, List<Object>> lines = new HashMap<>();
         try {
-            if (!this.rowType.get(label).getName().equals("java.lang.Integer")) {
+            if (!this.columnType.get(label).getName().equals("java.lang.Integer")) {
                 throw new IllegalArgumentException();
             } else {
                 int index = 0;
@@ -266,22 +266,22 @@ public class Dataframe {
      * @param label Suite de labels correspondant à des colonnes.
      * @return sous ensemble de colonnes.
      */
-    public Map<String, List<Object>> getSubRows(String... label) {
-        Map<String, List<Object>> rows = new HashMap<>();
+    public Map<String, List<Object>> getSubColumns(String... label) {
+        Map<String, List<Object>> columns = new HashMap<>();
         try {
             for (String l : label) {
                 //Cas où au moins un des labels passé en paramètre n'existe pas.
-                if (!this.frameRows.keySet().contains(l)) {
+                if (!this.frameColumns.keySet().contains(l)) {
                     throw new IllegalArgumentException();
                 } else {
-                    rows.put(l, this.frameRows.get(l));
+                    columns.put(l, this.frameColumns.get(l));
                 }
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
         }
-        return rows;
+        return columns;
     }
 
     /**
@@ -294,7 +294,7 @@ public class Dataframe {
         int i = 0;
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%1s", " "));//For the first empty case
-        for (String key : this.frameRows.keySet()) {
+        for (String key : this.frameColumns.keySet()) {
             sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
         }
         sb.append('\n');
@@ -327,7 +327,7 @@ public class Dataframe {
         int i = 0;
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%1s", " "));//For the first empty case
-        for (String key : this.frameRows.keySet()) {
+        for (String key : this.frameColumns.keySet()) {
             sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
         }
         sb.append('\n');
@@ -360,7 +360,7 @@ public class Dataframe {
         int i = this.frameLines.size() - nbLines;
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%1s", " "));//For the first empty case
-        for (String key : this.frameRows.keySet()) {
+        for (String key : this.frameColumns.keySet()) {
             sb.append(String.format("%8s", key));//Print column label (not in the dataframe)
         }
         sb.append('\n');
@@ -386,7 +386,7 @@ public class Dataframe {
      * @return vrai si le label entré correspond bien à un label présent dans le dataframe
      */
     public boolean labelIsCorrect(String label) {
-        if (getRowType(label) == null) {
+        if (getColumnType(label) == null) {
             throw new IllegalArgumentException("Incorrect label parameter");
         }
         return true;
@@ -400,7 +400,7 @@ public class Dataframe {
      */
     public Float dataframeMean(String label) {
         labelIsCorrect(label);
-        int size = getRow(label).size();
+        int size = getColumn(label).size();
         float columnSum = dataframeSum(label);
         return (columnSum / size);
     }
@@ -413,9 +413,9 @@ public class Dataframe {
      */
     public Float dataframeSum(String label) {
         labelIsCorrect(label);
-        if (getRowType(label).getSuperclass() == Number.class) {
+        if (getColumnType(label).getSuperclass() == Number.class) {
             //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
-            List<Object> myObjects = getRow(label);
+            List<Object> myObjects = getColumn(label);
             List<Float> myValues = new ArrayList<>();
             for (Object object : myObjects) {
                 myValues.add(Float.valueOf((Integer) object));
@@ -435,16 +435,16 @@ public class Dataframe {
      */
     public Object dataframeMin(String label) {
         labelIsCorrect(label);
-        if (getRowType(label).getSuperclass() == Number.class) {
+        if (getColumnType(label).getSuperclass() == Number.class) {
             //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
-            List<Object> myObjects = getRow(label);
+            List<Object> myObjects = getColumn(label);
             List<Float> myValues = new ArrayList<>();
             for (Object object : myObjects) {
                 myValues.add(Float.valueOf((Integer) object));
             }
             return Collections.min(myValues);
-        } else if (getRowType(label) == String.class || getRowType(label) == Character.class) {
-            List<Object> myObjects = getRow(label);
+        } else if (getColumnType(label) == String.class || getColumnType(label) == Character.class) {
+            List<Object> myObjects = getColumn(label);
             List<String> myValues = new ArrayList<>();
             for (Object object : myObjects) {
                 myValues.add(String.valueOf(object));
@@ -464,16 +464,16 @@ public class Dataframe {
      */
     public Object dataframeMax(String label) {
         labelIsCorrect(label);
-        if (getRowType(label).getSuperclass() == Number.class) {
+        if (getColumnType(label).getSuperclass() == Number.class) {
             //C'est une classe qui a pour super classe la classe Number (Integer, Float, ...)
-            List<Object> myObjects = getRow(label);
+            List<Object> myObjects = getColumn(label);
             List<Float> myValues = new ArrayList<>();
             for (Object object : myObjects) {
                 myValues.add(Float.valueOf((Integer) object));
             }
             return Collections.max(myValues);
-        } else if (getRowType(label) == String.class || getRowType(label) == Character.class) {
-            List<Object> myObjects = getRow(label);
+        } else if (getColumnType(label) == String.class || getColumnType(label) == Character.class) {
+            List<Object> myObjects = getColumn(label);
             List<String> myValues = new ArrayList<>();
             for (Object object : myObjects) {
                 myValues.add(String.valueOf(object));
@@ -527,9 +527,9 @@ public class Dataframe {
             dataframe.indexLabel.put(label, index);
             dataframe.labelIndex.put(index, label);
 
-            List<Object> column = dataframe.frameRows.get(old_label);
-            dataframe.frameRows.put(label, column);
-            dataframe.frameRows.remove(old_label);
+            List<Object> column = dataframe.frameColumns.get(old_label);
+            dataframe.frameColumns.put(label, column);
+            dataframe.frameColumns.remove(old_label);
         }
 
         return dataframe;
@@ -551,7 +551,7 @@ public class Dataframe {
         List<Integer> indexesToRemove = new Vector<>();
         for (String label : this.indexLabel.keySet()) {
             if (!labelsToKeep.contains(label)) {
-                dataframe.frameRows.remove(label);
+                dataframe.frameColumns.remove(label);
                 indexesToRemove.add(this.indexLabel.get(label));
             }
         }

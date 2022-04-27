@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,12 +51,12 @@ class DataframeTest {
 
     @Test
     public void testValueFirstIndexOfFirstRow () {
-        assertEquals(0, d.getRow("A").get(0));
+        assertEquals(0, d.getColumn("A").get(0));
     }
 
     @Test
     public void testSameValueFirstIndexRowAndLine () {
-        assertEquals(d.getLine(0).get(0), d.getRow("A").get(0));
+        assertEquals(d.getLine(0).get(0), d.getColumn("A").get(0));
     }
 
     @Test
@@ -86,7 +85,7 @@ class DataframeTest {
     }
 
     @Test
-    public void testFirstRow () {
+    public void testFirstColumn() {
         List<Integer> l = new ArrayList<Integer>() {
             {
                 add(0);
@@ -98,7 +97,7 @@ class DataframeTest {
         };
         Boolean ret = true;
         for(int i = 0; i < l.size(); i++) {
-            if(!l.get(i).equals(d.getRow("A").get(i))) {
+            if(!l.get(i).equals(d.getColumn("A").get(i))) {
                 ret = false;
             }
         }
@@ -106,26 +105,26 @@ class DataframeTest {
     }
 
     @Test
-    public void testIntegerRowC2 () {
+    public void testIntegerColumnC2() {
         String label = "age";
-        for (Object e : d2.getRow(label)) {
-            assertTrue(e.getClass().getName().equals("java.lang.Integer") && d2.getRowType(label).getName().equals("java.lang.Integer"));
+        for (Object e : d2.getColumn(label)) {
+            assertTrue(e.getClass().getName().equals("java.lang.Integer") && d2.getColumnType(label).getName().equals("java.lang.Integer"));
         }
     }
 
     @Test
-    public void testStringRowC2 () {
+    public void testStringColumnC2() {
         String label = "nom";
-        for (Object e : d2.getRow(label)) {
-            assertTrue(e.getClass().getName().equals("java.lang.String") && d2.getRowType(label).getName().equals("java.lang.String"));
+        for (Object e : d2.getColumn(label)) {
+            assertTrue(e.getClass().getName().equals("java.lang.String") && d2.getColumnType(label).getName().equals("java.lang.String"));
         }
     }
 
     @Test
-    public void testBooleanRowC2 () {
+    public void testBooleanColumnC2() {
         String label = "adulte";
-        for (Object e : d2.getRow(label)) {
-            assertTrue(e.getClass().getName().equals("java.lang.Boolean") && d2.getRowType(label).getName().equals("java.lang.Boolean"));
+        for (Object e : d2.getColumn(label)) {
+            assertTrue(e.getClass().getName().equals("java.lang.Boolean") && d2.getColumnType(label).getName().equals("java.lang.Boolean"));
         }
     }
 
@@ -215,11 +214,11 @@ class DataframeTest {
     }
 
     @Test
-    public void testGetSubRows () {
-        Map<String, List<Object>> rows1 = d2.getSubRows("nom");
+    public void testGetSubColumns() {
+        Map<String, List<Object>> rows1 = d2.getSubColumns("nom");
         assertEquals("Fourier", rows1.get("nom").get(0));
         assertEquals("Lasalle", rows1.get("nom").get(1));
-        Map<String, List<Object>> rows2 = d2.getSubRows("nom", "age");
+        Map<String, List<Object>> rows2 = d2.getSubColumns("nom", "age");
         assertEquals(13, rows2.get("age").get(1));
         assertEquals(18, rows2.get("age").get(0));
         assertEquals("Lasalle", rows2.get("nom").get(1));
